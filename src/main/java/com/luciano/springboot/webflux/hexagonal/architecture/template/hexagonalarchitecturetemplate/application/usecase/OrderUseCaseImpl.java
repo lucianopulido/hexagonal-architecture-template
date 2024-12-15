@@ -2,6 +2,7 @@ package com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonal
 
 import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.application.dto.CreateOrderRequest;
 import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.application.dto.OrderResponse;
+import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.application.mapper.OrderMapper;
 import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.domain.model.Order;
 import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.domain.port.in.OrderUseCase;
 import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.domain.port.out.NotificationPort;
@@ -12,6 +13,8 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+
+import static com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.application.mapper.OrderMapper.toEntity;
 
 @Service
 public class OrderUseCaseImpl implements OrderUseCase {
@@ -36,27 +39,17 @@ public class OrderUseCaseImpl implements OrderUseCase {
         orderDomainService.processOrder(order, pricePerUnit, Optional.of(BigDecimal.valueOf(1000)));
 
         // 3. Persistir y convertir a DTO de respuesta
-        return orderRepository.saveOrder(order)
+        return orderRepository.saveOrder(toEntity(order))
                 .doOnSuccess(notificationPort::sendOrderNotification)
-                .map(this::toResponse);
+                .map(OrderMapper::toResponse);
     }
 
     @Override
     public Mono<OrderResponse> getOrderById(String id) {
-        return orderRepository.findOrderById(id).map(this::toResponse);
+        return orderRepository.findOrderById(id).map(OrderMapper::toResponse);
     }
 
     private BigDecimal getPriceFromCatalog(String productId) {
         return BigDecimal.valueOf(10.0); // Simulación
-    }
-
-    private OrderResponse toResponse(Order order) {
-        OrderResponse response = new OrderResponse();
-        response.setId(order.getId());
-        response.setProductId(order.getProductId());
-        response.setQuantity(order.getQuantity());
-        response.setTotalPrice(order.getTotalPrice());
-        response.setCreatedAt(order.getCreatedAt());
-        return response;
     }
 }

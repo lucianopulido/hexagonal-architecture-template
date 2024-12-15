@@ -1,11 +1,11 @@
 package com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.domain.port.out;
 
 import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.domain.model.Order;
-import reactor.core.publisher.Flux;
+import com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.infrastructure.entities.OrderDocument;
 import reactor.core.publisher.Mono;
 
 public interface OrderRepositoryPort {
-    Mono<Order> saveOrder(Order order);
-    Flux<Order> findAllOrders();
+    Mono<Order> saveOrder(OrderDocument order);
+
     Mono<Order> findOrderById(String id);
 }

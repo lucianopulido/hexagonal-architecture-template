@@ -1,9 +1,5 @@
 package com.luciano.springboot.webflux.hexagonal.architecture.template.hexagonalarchitecturetemplate.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -24,6 +20,13 @@ public class Order {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Order(String id, String productId, Integer quantity, BigDecimal totalPrice, LocalDateTime createdAt) {
+        this.id = id;
+        this.productId = productId;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.createdAt = createdAt;
+    }
 
     public void validate() {
         if (quantity <= 0) {
